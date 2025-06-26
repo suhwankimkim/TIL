@@ -107,16 +107,102 @@ $ git config --global core.pager "cat" # 위와 같은 이유에서 cat을 기�
 ``` 
 git의 환경설정이 완료 되었으면 github에서 만든 repo에 주소를 복사해와 개발할 directory를 경로설정 한 후 repo를 copy해 온다. 즉 리모트를 복사해온다.
 
+추가적인 환경설정의 수정이 필요한 경우
+```bash
+$ vi ~/.gitconfig #에서 값을 수정한다.
+```
+
 ```bash
 $ git clone [url] git bash # 햔재 위치에서 repo clone이 생성
 ```
 
 ```bash
 $ git status # git에서 상태를 알려고 할 때 사용하는 명령어
-$ git add 파일이름 # git에서 개발할려고 무언가 파일을 만들거나 수정사항이 발생하였을 때 status에서 추적이 되는데 어떠한 파일의 수정사항을 commit할건지 정할 때 사용
-$ git commit # 
+$ git add 파일이름 # git에서 개발할려고 무언가 파일을 만들거나 수정사항이 발생하였을 때 status에서 추적이 되는데 어떠한 파일의 수정사항을 commit할건지 정할 때 사용 처음에는 README.md로 실행해준다
+$ git commit # add로 올려놓은 파일을 어떻게 수정, 생성, 삭제 했는지를 적게 된다.
+$ git push origin main # local에서 변경된 사항들과 commit을 REMOTE에 push 하게 된다.
+```
+정리하면 git status, git add README.md, git commit, git push origin main을 통해 git 상태확인, commit을 작성할 파일 올려 놓기, commit 작성, 수정사항 REMOTE에 push 순으로 진행하게 된다.
+처음 github를 사용하여 git push origin main을 하게되면 계정접근을 위한 Token입력이 필요하다.
+[Go to create Token!](https://github.com/settings/tokens)에 접속하여 토큰을 생성한 뒤 비밀번호 대신 복사하여 사용하면 된다.
+    - MacOS에서는 값을 입력해도 입력여부가 보이지 않는다.
 
+## How to write commit ?
+commit은 개발하면서 어떤 의도를 가지고 개발을 하는지를 알 수 있는 좋은 도구이지만 기록을 제대로 하지 않으면 여러명이 동시에 하는 프로젝트인 경우에는 혼란을 야기할 수 있다. 따라서 일정한 commit 작성 규칙이 있다.
 
+- commit은 1줄이 제목이며 제목을 작성하지 않으면 안된다.
+- commit에 내용은 1줄 이후 3번째 줄부터 작성하면 된다. 보통 제목으로 내용을 알 수 있게 작성이 되어있어 내용은 잘 작성하지 않는다.
+- Merge를 통해 충돌이 일어난 파일은 작성을 생략하여도 된다.
+
+1. commit의 제목은 commit을 설명하는 문장형이 아닌 구나 절의 형태로 작성한다.
+2. importanceofcapitalize 'Importance of Capitalize' 중요한 단어 첫 알파벳은 대문자
+3. prefix 꼭 달기 무슨 종류의 commit인지 대략 구분할 수 있는 구분을 달아주기
+    |Prefix|내용|
+    |---|---|
+    |feat|기능 개발 관련|
+    |fix|오류 개선 혹은 버그 패치|
+    |docs|문서화 작업|
+    |test|test 관련|
+    |conf|환경설정 관련|
+    |build|빌드 작업 관련|
+    |ci|Continuous Integration 관련|
+    |chore|패키지 매니저, 스크립트 등|
+    |style|코드 포매팅 관련|
+
+## github를 통해 프로젝트를 시작한다면 반드시 해야하는 작업!!
+여러명이 함께 github를 통해 개발을 한다면 각자 개발하는 local에 os가 어떤사람은 가상환경 어떤사람은 window 또 어떤사람은 Mac인경우 각자 os에서만 실행되는 파일이라던지 aws server를 open할 때 사용되는 key.pem 파일이라던지 중요한 민감정보와 같은 것들이 같이 push될 수 있다. 이러한 상황을 막기 위해서 예외 처리를 해야하는데 다음과 같이 할 수 있다.
+
+```bash
+$ mkdir .gitignore # 특정 파일이나 디렉토리를 추적하지 않도록 명시하기 위한 파일
+$ vi .gitignore # 어떤 파일을 예외처리 할건지에 대한 설정을 직접해야한다.
+```
+어떤 파일을 예외처리 할건지에 대한 설정은 [Go to create .gitignore](https://gitignore.io/)에서 할 수 있다. 자신이 사용하는 언어 환경 등을 추가하면 적절한 .gitignore를 작성해주므로 복사 붙여넣기만 하면된다.
+
+## git with .ipynb
+옛날에는 jupyter notebook을 통해 수정이 이루어지면 뭐가 바뀌었는지 변경사항을 추가적인 변환을 통해 일일이 찾아 주었지만 요새 github에서 제공되어지는 옵션을 통해 github에서 무엇이 바뀌었는지 심지어 그래프에 변화도 비교해서 추적가능하다.
+
+## pre-commit
+* commit 수행 전 체크해야 할 것들을 자동으로 수행하도록 도와주는 도구이다.
+* 보통 add인 상황에서 사용되며 파일의 불필요한 공백같은 것을 알아서 제거해주거나 충돌이 일어나면 자동으로 병합해준다.
+
+```bash
+$ pip install pre-commit
+$ pre-commit --version
+$ touch .pre-commit-config.yaml
+# after setting configuration
+$ pre-commit install
+$ pre-commit run --all-files
+```
+
+## **Branch**
+- commit이 시간이라면 Branch는 공간에 해당한다. 따로 독립적인 분리된 공간을 만들어서 매우 공격적인 개발을 할 수 있게 해주는 강력한 도구
+```bash
+# Branch list
+$ git branch # local branch check
+$ git branch -r # remote branch check
+$ git branch -a # all branch check
+
+# Create new branch
+$ git branch [branch name] # branch name으로 된 branch 생성
+
+# switch to branch
+$ git switch [branch name] # branch name으로 된 branch로 작업경로 변경
+
+# Delete branch
+$ git branch -D [branch name] # branch name으로 된 branch 삭제
+```
+
+- 반드시 주의할 점으로 브랜치를 넘나들 때는 반드시 해당 브랜치에 커밋이 끝난상태이여야 한다.!!!
+    - origin/HEAD : HEAD는 최근, 최신이라는 의미로 최근의 쓰여진 commit이나 branch를 의미한다. 깃허브에 리모트 주소를 일일이 표현해줄 수가 없어서 origin이라고 표현하여 remote주소를 표현해준다. 
+    - branch에서 작업한게 마음에 들면 병합하면 된다. main branch로 넘어와 git merge [branch name]으로 병합해주면된다.
+
+## Merge conflict
+- 병합을 하다보면 branch를 만들고 독립적으로 main도 commit하고 branch도 commit을 한다면 branch에는 main에 commit에 대한 정보가 없어서 충돌하게 된다. 이럴 때 해결하는 2가지 방법
+
+    1. Use to revase : branch에 변경된 main에 정보를 주는 방법이다. 잘 사용하지는 않고 main에서 개발한 내용이 branch에 필요한 경우에만 사용된다.
+    2. Use to merge : Merge를 그냥 진행하게 된다면 충돌이 일어난 파일에 충돌이 어디서 일어나는지 표기가 되게 된다. <<<<, >>>>>, ======과 같은 부분을 제거하고 어떻게 병합할 것인지 합의 후에 수정
+
+- 추가적인 **주의**점 git commit -m '내용'을 통해 vim text editor모드에 들어가지 않고 cli상태에서 commit은 가능하지만 merge된 파일은 head부분이 이미 작성되어 있기 때문에 굳이 작성해줄 필요가 없다 오히려 이러한 command로 인해 Merge된 파일인데 commit을 통해 알 수 없어지게 된다면 프로젝트를 참가하거나 나중에 내가 보았을 때 구분을 할 수 없어 혼란을 야기 할 수 있다.
 
 
 
